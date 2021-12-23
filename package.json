@@ -1,35 +1,5 @@
 {
-  "_from": "react-native-smtp-mailer@1.2.5",
-  "_id": "react-native-smtp-mailer@1.2.5",
-  "_inBundle": false,
-  "_integrity": "sha512-okpZTA9xS4Gf3trlHjQ3W8/xmB1QAPGesGieesxdjO5S+rdBrvJSnNd3SOODJcUjFRX1aM7R5xZ7VOW17JQKsg==",
-  "_location": "/react-native-smtp-mailer",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "react-native-smtp-mailer@1.2.5",
-    "name": "react-native-smtp-mailer",
-    "escapedName": "react-native-smtp-mailer",
-    "rawSpec": "1.2.5",
-    "saveSpec": null,
-    "fetchSpec": "1.2.5"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/react-native-smtp-mailer/-/react-native-smtp-mailer-1.2.5.tgz",
-  "_shasum": "ab9f5dcece1664a7a2f9cc71c140a664e62a95a8",
-  "_spec": "react-native-smtp-mailer@1.2.5",
-  "_where": "/Users/tag/ReactProjects/tagplus",
-  "author": {
-    "name": "angeloslex"
-  },
-  "bugs": {
-    "url": "https://github.com/angelos3lex/react-native-smtp-mailer/issues"
-  },
-  "bundleDependencies": false,
+  "author": "rfranca2",
   "deprecated": false,
   "description": "Send emails by connecting to smtp server+attachments, using android javamail and ios mailcore2",
   "devDependencies": {
@@ -39,7 +9,7 @@
     "@types/react-test-renderer": "^17.0.0",
     "typescript": "^4.1.2"
   },
-  "homepage": "https://github.com/angelos3lex/react-native-smtp-mailer",
+  "homepage": "https://github.com/angelos3lex/react-native-smtp-mailer#readme",
   "keywords": [
     "react-native",
     "smtp",
@@ -47,13 +17,22 @@
   ],
   "license": "MIT",
   "main": "index.ts",
-  "name": "react-native-smtp-mailer",
+  "name": "@rfranca2/react-native-smtp-mailer",
   "peerDependencies": {
     "react-native": "^0.41.2"
+  },
+  "version": "1.2.5",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/angelos3lex/react-native-smtp-mailer.git"
   },
-  "version": "1.2.5"
+  "bugs": {
+    "url": "https://github.com/angelos3lex/react-native-smtp-mailer/issues"
+  }
 }
