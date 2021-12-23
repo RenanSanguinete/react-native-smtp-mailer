@@ -25,6 +25,12 @@ export interface SmtpOptions {
     password: string;
 
     /**
+     * Sender email
+     * i.e: "foo@bar.com"
+     */ 
+     from: string; 
+
+    /**
      * Comma separated values if want to add multiple recipients
      * i.e: "foo@bar.com,bar@foo.com"
      */ 

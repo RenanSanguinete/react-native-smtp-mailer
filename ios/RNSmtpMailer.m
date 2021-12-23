@@ -16,6 +16,7 @@ RCT_EXPORT_METHOD(sendMail:(NSDictionary *)obj resolver:(RCTPromiseResolveBlock)
     NSString *port = [RCTConvert NSString:obj[@"port"]];
     NSString *username = [RCTConvert NSString:obj[@"username"]];
     NSString *password = [RCTConvert NSString:obj[@"password"]];
+    NSString *fromAdress = [RCTConvert NSString:obj[@"from"]];
     NSString *recipients = [RCTConvert NSString:obj[@"recipients"]];
     NSString *subject = [RCTConvert NSString:obj[@"subject"]];
     NSString *body = [RCTConvert NSString:obj[@"htmlBody"]];
@@ -39,11 +40,11 @@ RCT_EXPORT_METHOD(sendMail:(NSDictionary *)obj resolver:(RCTPromiseResolveBlock)
     smtpSession.username = username;
     smtpSession.password = password;
     smtpSession.authType = MCOAuthTypeSASLPlain;
-    smtpSession.connectionType = MCOConnectionTypeTLS;
+    smtpSession.connectionType = MCOConnectionTypeStartTLS;
     MCOMessageBuilder *builder = [[MCOMessageBuilder alloc] init];
     
     MCOAddress *from = [MCOAddress addressWithDisplayName:fromName
-                                                mailbox:username];
+                                                mailbox:fromAdress];
                                                 
     MCOAddress *to = [MCOAddress addressWithDisplayName:nil
                                               mailbox:recipients];
@@ -73,7 +74,7 @@ RCT_EXPORT_METHOD(sendMail:(NSDictionary *)obj resolver:(RCTPromiseResolveBlock)
           }
     }
     NSData * rfc822Data = [builder data];
-    
+
     MCOSMTPSendOperation *sendOperation =
     [smtpSession sendOperationWithData:rfc822Data];
     [sendOperation start:^(NSError *error) {

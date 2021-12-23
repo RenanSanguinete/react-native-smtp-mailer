@@ -1,5 +1,5 @@
 
-package com.rnsmtpmailer;
+package com.reactlibrary;
 
 import android.os.AsyncTask;
 import com.facebook.react.bridge.Promise;
@@ -18,11 +18,12 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
+import javax.mail.PasswordAuthentication;   
+import javax.mail.Session;   
+import javax.mail.Transport;   
+import javax.mail.internet.InternetAddress;   
 import javax.mail.internet.MimeMessage;
 import javax.mail.BodyPart;
 import javax.mail.Multipart;
@@ -52,26 +53,27 @@ public class RNSmtpMailerModule extends ReactContextBaseJavaModule {
     public void sendMail(final ReadableMap obj, final Promise promise) {
         AsyncTask.execute(new Runnable() {
 
-            String mailhost = obj.getString("mailhost");
-            String port = obj.getString("port");
-            String username = obj.getString("username");
-            String password = obj.getString("password");
-            String recipients = obj.getString("recipients");
-            String subject = obj.getString("subject");
-            String body = obj.getString("htmlBody");
-
-            String fromName = obj.hasKey("fromName") ? obj.getString("fromName") : username;
-            String replyToAddress = obj.hasKey("replyTo") ? obj.getString("replyTo") : username;
-            ReadableArray bcc = obj.hasKey("bcc") ? obj.getArray("bcc") : null;
-            Boolean ssl = obj.hasKey("ssl") ? obj.getBoolean("ssl") : true;
-            ReadableArray attachmentPaths = obj.hasKey("attachmentPaths") ? obj.getArray("attachmentPaths") : null;
-            ReadableArray attachmentNames = obj.hasKey("attachmentNames") ? obj.getArray("attachmentNames") : null;
+        String mailhost = obj.getString("mailhost");
+        String port = obj.getString("port");
+        Boolean ssl = obj.getBoolean("ssl");
+        String username = obj.getString("username");
+        String password = obj.getString("password");
+        String from = obj.getString("from");
+        String recipients = obj.getString("recipients");
+        ReadableArray bcc = obj.hasKey("bcc") ? obj.getArray("bcc") : null;
+        String subject = obj.getString("subject");
+        String body = obj.getString("htmlBody");
+        String fromName = obj.hasKey("fromName") ? obj.getString("fromName") : from;
+        String replyToAddress = obj.hasKey("replyTo") ? obj.getString("replyTo") : from;
+        ReadableArray attachmentPaths = obj.getArray("attachmentPaths");
+        ReadableArray attachmentNames = obj.getArray("attachmentNames");
+        ReadableArray attachmentTypes = obj.getArray("attachmentTypes");
 
             @Override
             public void run() {
                 try {
                     MailSender sender = new MailSender(username, password, mailhost, port, ssl);
-                    sender.sendMail(subject, body, username, fromName, replyToAddress, recipients, bcc, attachmentPaths, attachmentNames);
+                    sender.sendMail(subject, body, from,fromName, replyToAddress, recipients, bcc, attachmentPaths, attachmentNames, attachmentTypes);
 
                     WritableMap success = new WritableNativeMap();
                     success.putString("status", "SUCCESS");
@@ -125,7 +127,7 @@ class MailSender extends javax.mail.Authenticator {
     }
 
     public synchronized void sendMail(String subject, String body, String sender, String senderAlias, String replyToAddress, String recipients, ReadableArray bcc,
-          ReadableArray attachmentPaths, ReadableArray attachmentNames) throws Exception {
+          ReadableArray attachmentPaths, ReadableArray attachmentNames, ReadableArray attachmentTypes) throws Exception {
         MimeMessage message = new MimeMessage(session);
         Transport transport = session.getTransport();
         BodyPart messageBodyPart = new MimeBodyPart();
@@ -137,6 +139,7 @@ class MailSender extends javax.mail.Authenticator {
         }
 
         message.setReplyTo(InternetAddress.parse(replyToAddress));
+        //message.setFrom(new InternetAddress(sender, ""));
         message.setSubject(subject);
         message.setSentDate(new Date());
 
@@ -150,23 +153,22 @@ class MailSender extends javax.mail.Authenticator {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
         }
 
-        if (bcc != null) {
-            for (int i = 0; i < bcc.size(); i++) {
+        if(bcc != null) {
+            for(int i = 0; i < bcc.size(); i++) {
                 message.addRecipients(Message.RecipientType.BCC, bcc.getString(i));
             }
         }
 
-        if (attachmentPaths != null && attachmentPaths.size() > 0) {
-            for (int i = 0; i < attachmentPaths.size(); i++) {
-                messageBodyPart = new MimeBodyPart();
-                DataSource source = new FileDataSource(attachmentPaths.getString(i));
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                if (attachmentNames != null && attachmentNames.size() > i) {
-                    messageBodyPart.setFileName(attachmentNames.getString(i));
-                }
-                messageBodyPart.setHeader("Content-ID", "<content_id_" + String.valueOf(i) + ">");
-                _multipart.addBodyPart(messageBodyPart);
+        for (int i = 0; i < attachmentPaths.size(); i++) {
+            messageBodyPart = new MimeBodyPart();
+            DataSource source = new FileDataSource(attachmentPaths.getString(i));
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(attachmentNames.getString(i));
+            if (attachmentTypes.getString(i) == "img") {
+                messageBodyPart.setHeader("Content-ID", "<image>");
             }
+            _multipart.addBodyPart(messageBodyPart);
+            messageBodyPart = new MimeBodyPart();
         }
 
         message.setContent(_multipart);
